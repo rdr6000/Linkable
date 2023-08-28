@@ -31,7 +31,7 @@ class Linkable extends StatefulWidget {
 
   final textWidthBasis;
 
-  final openPhoneLinkInWhatsapp;
+  final bool openPhoneLinkInWhatsapp;
 
   final textHeightBehavior;
 
@@ -119,7 +119,7 @@ class _LinkableState extends State<Linkable> {
 
   _launch(String url) async {
     if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
+      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
     } else {
       throw 'Could not launch $url';
     }
@@ -134,7 +134,7 @@ class _LinkableState extends State<Linkable> {
       case tel:
         return text.substring(0, 4) == 'tel:' ? text : 'tel:$text';
       case whatsapp:
-        return text.substring(0, 4) == 'wa.me:' ? text : 'wa.me:$text';
+        return text.substring(0, 5) == 'wa.me/' ? text : 'https://wa.me/$text';
       default:
         return text;
     }

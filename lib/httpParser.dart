@@ -1,6 +1,6 @@
-import 'package:linkable/constants.dart';
-import 'package:linkable/link.dart';
-import 'package:linkable/parser.dart';
+import 'package:linkable_text_widget/constants.dart';
+import 'package:linkable_text_widget/link.dart';
+import 'package:linkable_text_widget/parser.dart';
 
 class HttpParser implements Parser {
   String text;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:linkable/linkable.dart';
+import 'package:linkable_text_widget/linkable.dart';
 
 void main() => runApp(new LinkableExample());
 

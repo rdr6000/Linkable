@@ -50,7 +50,7 @@ The following is required in AndroidManifest.xml or links will fail to launch.
 ## Usage
 ### Basic
 ```
-import 'package:linkable/linkable.dart';
+import 'package:linkable_text_widget/linkable.dart';
 
 Linkable(
 	text:

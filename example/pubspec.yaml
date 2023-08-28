@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   url_launcher: ^6.1.12
-  linkable:
+  linkable_text_widget:
     path: ..
 
 flutter:

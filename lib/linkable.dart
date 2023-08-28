@@ -2,15 +2,15 @@ library linkable;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:linkable/constants.dart';
-import 'package:linkable/emailParser.dart';
-import 'package:linkable/httpParser.dart';
-import 'package:linkable/link.dart';
-import 'package:linkable/parser.dart';
-import 'package:linkable/telParser.dart';
+import 'package:linkable_text_widget/constants.dart';
+import 'package:linkable_text_widget/emailParser.dart';
+import 'package:linkable_text_widget/httpParser.dart';
+import 'package:linkable_text_widget/link.dart';
+import 'package:linkable_text_widget/parser.dart';
+import 'package:linkable_text_widget/telParser.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class Linkable extends StatelessWidget {
+class Linkable extends StatefulWidget {
   final String text;
 
   final textColor;
@@ -31,10 +31,9 @@ class Linkable extends StatelessWidget {
 
   final textWidthBasis;
 
-  final textHeightBehavior;
+  final openPhoneLinkInWhatsapp;
 
-  List<Parser> _parsers = <Parser>[];
-  List<Link> _links = <Link>[];
+  final textHeightBehavior;
 
   Linkable({
     Key? key,
@@ -47,9 +46,19 @@ class Linkable extends StatelessWidget {
     this.textScaleFactor = 1.0,
     this.maxLines,
     this.strutStyle,
+    this.openPhoneLinkInWhatsapp = false,
     this.textWidthBasis = TextWidthBasis.parent,
     this.textHeightBehavior,
   }) : super(key: key);
+
+  @override
+  State<Linkable> createState() => _LinkableState();
+}
+
+class _LinkableState extends State<Linkable> {
+  List<Parser> _parsers = <Parser>[];
+
+  List<Link> _links = <Link>[];
 
   @override
   Widget build(BuildContext context) {
@@ -57,16 +66,16 @@ class Linkable extends StatelessWidget {
     return SelectableText.rich(
       TextSpan(
         text: '',
-        style: style,
+        style: widget.style,
         children: _getTextSpans(),
       ),
-      textAlign: textAlign,
-      textDirection: textDirection,
-      textScaleFactor: textScaleFactor,
-      maxLines: maxLines,
-      strutStyle: strutStyle,
-      textWidthBasis: textWidthBasis,
-      textHeightBehavior: textHeightBehavior,
+      textAlign: widget.textAlign,
+      textDirection: widget.textDirection,
+      textScaleFactor: widget.textScaleFactor,
+      maxLines: widget.maxLines,
+      strutStyle: widget.strutStyle,
+      textWidthBasis: widget.textWidthBasis,
+      textHeightBehavior: widget.textHeightBehavior,
     );
   }
 
@@ -74,34 +83,34 @@ class Linkable extends StatelessWidget {
     List<TextSpan> _textSpans = <TextSpan>[];
     int i = 0;
     int pos = 0;
-    while (i < text.length) {
-      _textSpans.add(_text(text.substring(
+    while (i < widget.text.length) {
+      _textSpans.add(_text(widget.text.substring(
           i,
           pos < _links.length && i <= _links[pos].regExpMatch.start
               ? _links[pos].regExpMatch.start
-              : text.length)));
+              : widget.text.length)));
       if (pos < _links.length && i <= _links[pos].regExpMatch.start) {
         _textSpans.add(_link(
-            text.substring(
+            widget.text.substring(
                 _links[pos].regExpMatch.start, _links[pos].regExpMatch.end),
             _links[pos].type));
         i = _links[pos].regExpMatch.end;
         pos++;
       } else {
-        i = text.length;
+        i = widget.text.length;
       }
     }
     return _textSpans;
   }
 
   _text(String text) {
-    return TextSpan(text: text, style: TextStyle(color: textColor));
+    return TextSpan(text: text, style: TextStyle(color: widget.textColor));
   }
 
   _link(String text, String type) {
     return TextSpan(
         text: text,
-        style: TextStyle(color: linkColor),
+        style: TextStyle(color: widget.linkColor),
         recognizer: TapGestureRecognizer()
           ..onTap = () {
             _launch(_getUrl(text, type));
@@ -124,6 +133,8 @@ class Linkable extends StatelessWidget {
         return text.substring(0, 7) == 'mailto:' ? text : 'mailto:$text';
       case tel:
         return text.substring(0, 4) == 'tel:' ? text : 'tel:$text';
+      case whatsapp:
+        return text.substring(0, 4) == 'wa.me:' ? text : 'wa.me:$text';
       default:
         return text;
     }
@@ -136,9 +147,9 @@ class Linkable extends StatelessWidget {
   }
 
   _addParsers() {
-    _parsers.add(EmailParser(text));
-    _parsers.add(HttpParser(text));
-    _parsers.add(TelParser(text));
+    _parsers.add(EmailParser(widget.text));
+    _parsers.add(HttpParser(widget.text));
+    _parsers.add(TelParser(widget.text, widget.openPhoneLinkInWhatsapp));
   }
 
   _parseLinks() {

@@ -45,3 +45,8 @@
 ## [3.0.1] - 29 July 2021.
 
 * Removed undefined properties.
+
+## [4.0.0] - 29 August 2023.
+
+* Updated url_launcher version.
+* Added open with Whatsapp Support
